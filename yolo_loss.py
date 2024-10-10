@@ -79,13 +79,6 @@ class YoloLoss(nn.Module):
         Returns:
         best_iou: (tensor) size (-1, 1)
         best_boxes : (tensor) size (-1, 5), containing the boxes which give the best iou among the two (self.B) predictions
-
-        Hints:
-        1) Find the iou's of each of the 2 bounding boxes of each grid cell of each image.
-        2) For finding iou's use the compute_iou function
-        3) use xywh2xyxy to convert bbox format if necessary,
-        Note: Over here initially x, y are the center of the box and w,h are width and height.
-        We perform this transformation to convert the correct coordinates into bounding box coordinates.
         """
         best_ious = torch.full((pred_box_list[0].shape[0], 1), -1.)
         best_boxes = torch.zeros(pred_box_list[0].shape[0], 5)
@@ -129,11 +122,6 @@ class YoloLoss(nn.Module):
 
         Returns:
         loss : scalar
-
-        Hints:
-        1) Only compute loss for cell which doesn't contain object
-        2) compute loss for all predictions in the pred_boxes_list list
-        3) You can assume the ground truth confidence of non-object cells is 0
         """
 
         N = pred_boxes_list[0].shape[0]
@@ -163,10 +151,6 @@ class YoloLoss(nn.Module):
 
         Returns:
         contain_loss : scalar
-
-        Hints:
-        The box_target_conf should be treated as ground truth, i.e., no gradient
-
         """
 
         loss = ((box_pred_conf - box_target_conf)**2).sum()
@@ -198,6 +182,7 @@ class YoloLoss(nn.Module):
 
     def forward(self, pred_tensor, target_boxes, target_cls, has_object_map):
         """
+        Params:
         pred_tensor: (tensor) size(N,S,S,Bx5+20=30) where:  
                             N - batch_size
                             S - width/height of network output grid
